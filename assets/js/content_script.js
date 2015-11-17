@@ -1,58 +1,44 @@
 /**
- *	iFrond Chrome Extension Content Script
  *	Written by Paul
  *	contact	linp21847@gmail.com	
 */
 
-(function(window, jQuery) {
 
-	$(document).ready(function() {
-		var addExtensionStyleSheetsFile = function(fileName) {
-				var $header = $("head"),
-					$newStyleSheet = $("<link/>", {
-						rel: "stylesheet",
-						type: "text/css",
-						href: chrome.extension.getURL("assets/css/" + fileName)
-					});
+console.log("Hlskdjflksjdlfkdj");
 
-				$header.append($newStyleSheet);
-			},
+$(document).ready(function() {
 
-			$extensionButtonContainer = $("div.qks-group-page-wrap ul.qks-group-page"), // Extension Button container
-			$extensionButtonWrapper = $("<li/>", {	// Extension Button container
-					class: "qks-group-page-item extensionButton-container"
-				}),
-			$extensionButton = $("<button/>", {	// // Extension Button
-					class: "quick-key quick-key--green extension-button"
-				}).text("Extension Button"),
-
-			extensionButtonHandler = function(event) {
-				console.log("Extension Button Clicked");
-
-				chrome.runtime.sendMessage({
-					msg: "api",
-					data: {}
-				}, function(response) {
-					console.log(response);
-				});
-			};
-
-		if ($extensionButtonContainer.length === 0) {
-			console.log("Button container not found...");
-		} else {
-			addExtensionStyleSheetsFile("style.css");
-
-			$extensionButtonWrapper.appendTo($extensionButtonContainer);
-			$extensionButtonWrapper.append($extensionButton);
-			$extensionButton.click(extensionButtonHandler);
+	var indexOfCode = -1;
+	var asinCode;
+	$("#detail-bullets div.content ul li").each( function( index ) {
+		var content = $( this ).text();
+		if ( $($(this).find("b")[0]).text().trim() === "ASIN:" ) {
+			indexOfCode = index;
+			asinCode = content.substr("ASIN: ".length);
+			alert(asinCode);
 		}
 	});
 
-	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-		switch(request.msg) {
-			case "api-callback":
-				console.log(request.data);
-				break;
-		}
-	})
-})(window, $)
+	if ( indexOfCode == -1 ) {
+		alert("Cannot find ASIN CODE!");
+	};
+
+	var	extensionButtonHandler = function(event) {
+
+		chrome.runtime.sendMessage({
+			msg: "asin",
+			data: {}
+		}, function(response) {
+			console.log(response);
+		});
+	};
+
+});
+
+	// chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	// 	switch(request.msg) {
+	// 		case "api-callback":
+	// 			console.log(request.data);
+	// 			break;
+	// 	}
+	// })
